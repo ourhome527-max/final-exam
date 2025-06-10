@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.framework.mapper.ProductMapper">
+
+	<!-- 검색어에 해당하는 상품 수량 조회-->
+	<select id="selectProductTotalCount" parameterType="java.util.HashMap" resultType="int">
+		<![CDATA[ 
+			SELECT
+				COUNT(*) AS TOTAL_COUNT
+			FROM
+				tb_product
+			WHERE
+				1=1
+		]]>
+		<if test="searchProductName != null and searchProductName != ''">
+    		AND product_name LIKE CONCAT ('%', #{searchProductName} , '%')
+    	</if>
+    
+   		<if test="searchProductType != null and searchProductType != ''">
+    		AND product_type LIKE CONCAT ('%', #{searchProductType} , '%')
+    	</if>
+	</select>
+	
+	<!-- 검색어에 해당하는 상품 리스트 조회-->
+	<select id="selectProductList" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+   		<![CDATA[ 
+    		SELECT 
+    			product_seq,
+       			product_type,
+       			product_name,
+       			product_price,
+      			DATE_FORMAT(reg_dt, '%Y-%m-%d %H:%i:%s') AS reg_dt,
+       			DATE_FORMAT(mod_dt, '%Y-%m-%d %H:%i:%s') AS mod_dt	
+    		FROM 
+    			tb_product
+    		WHERE 
+    			1=1
+    	]]>
+    	<if test="searchProductName != null and searchProductName != ''">
+    		AND product_name LIKE CONCAT ('%', #{searchProductName} , '%')
+    	</if>
+	    <if test="searchProductType != null and searchProductType != ''">
+    		AND product_type LIKE CONCAT ('%', #{searchProductType} , '%')
+    	</if>
+   		<![CDATA[ 
+   			ORDER BY mod_dt DESC
+   		]]>
+   		<if test="pageSize != null and pageOffset != null">
+   			LIMIT #{pageSize} OFFSET #{pageOffset}
+   		</if>
+	</select>
+	
+	<!-- 상품 상세 정보 조회 -->
+	<select id="selectProduct" resultType="java.util.HashMap" parameterType="int">
+    	<![CDATA[ 
+    		SELECT 
+    			product_seq,
+       			product_type,
+       			product_name,
+       			product_price,
+      			DATE_FORMAT(reg_dt, '%Y-%m-%d %H:%i:%s') AS reg_dt,
+       			DATE_FORMAT(mod_dt, '%Y-%m-%d %H:%i:%s') AS mod_dt	
+    		FROM 
+    			tb_product
+    		WHERE 
+    			product_seq=#{product_seq}
+    	]]>
+	</select>
+
+</mapper>
